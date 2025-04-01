@@ -4,13 +4,12 @@ import Header from './Header'
 import { checkvalidation } from "../utils/validate";
 import { auth } from "../utils/firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile   } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import { USER_AVTAR } from "../utils/constant";
 
 
 const Login = () => {
-    const navigate= useNavigate();
     const dispatch= useDispatch();
     const [isSigninForm, setIsSignInForm]= useState(true);
     const password= useRef(null);
@@ -20,12 +19,10 @@ const Login = () => {
     const handleButtonClick=()=>{
         const errorMessage=checkvalidation(email.current.value, password.current.value);
         setErrorMessage(errorMessage);
-    console.log(errorMessage);
         if(errorMessage) return;
     
         if(!isSigninForm){
-            console.log('Sign In', email.current.value, password.current.value);
-            createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+             createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
                 .then((userCredential) => {
                     // Signed up 
                     const user = userCredential.user;
@@ -33,7 +30,7 @@ const Login = () => {
                     
                     updateProfile(user, {
                         displayName: name.current.value,
-                        photoURL: "https://occ-0-6247-2164.1.nflxso.net/dnm/api/v6/K6hjPJd6cR6FpVELC5Pd6ovHRSk/AAAABdpkabKqQAxyWzo6QW_ZnPz1IZLqlmNfK-t4L1VIeV1DY00JhLo_LMVFp936keDxj-V5UELAVJrU--iUUY2MaDxQSSO-0qw.png?r=e6e",
+                        photoURL: {USER_AVTAR}
                       })
                         .then(() => {
                           const { uid, email, displayName, photoURL } = auth.currentUser;
@@ -57,13 +54,12 @@ const Login = () => {
                     // ..
                 });
         }else{
-            console.log('Sign Up', email.current.value, password.current.value);
             signInWithEmailAndPassword(auth, email.current.value, password.current.value)
                 .then((userCredential) => {
                     // Signed in 
                     const user = userCredential.user;
                     console.log(user);
-                    navigate('/browse');
+                   
                     // ...
                 })
                 .catch((error) => {
@@ -92,7 +88,7 @@ const Login = () => {
             <button className='p-4 my-4 bg-red-600 w-full' onClick={handleButtonClick}>{isSigninForm?'Sign In':'Sign Up'}</button>
             <p className='text-white cursor-pointer'onClick={toggleSignInForm}>{isSigninForm?'New to Netflix? Sign up Now':'Already registered Login here'} </p>
         </form>
-        Login</div>
+        </div>
   )
 }
 
